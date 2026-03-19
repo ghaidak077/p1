@@ -105,12 +105,34 @@
         #ga-loader.ga-loader--out { transform: translateY(-100%); }
         .ga-loader-bar { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, oklch(83.5% 0.17 84), oklch(88% 0.134 86)); box-shadow: 0 0 12px oklch(83.5% 0.17 84 / 60%); }
 
-        .cursor { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; width: 10px; height: 10px; border-radius: 100px; background: var(--accent); box-shadow: 0 0 14px oklch(83.5% 0.17 84 / 55%), 0 0 4px oklch(83.5% 0.17 84 / 80%); display: flex; align-items: center; justify-content: center; transition: width .32s cubic-bezier(0.16,1,0.3,1), height .32s cubic-bezier(0.16,1,0.3,1), background .3s, box-shadow .35s, opacity .25s; }
-        .cursor--hover { width: 88px; height: 32px; box-shadow: 0 0 32px oklch(83.5% 0.17 84 / 40%), 0 6px 24px oklch(0% 0 0 / 45%); }
-        .cursor--text { width: 2px; height: 24px; border-radius: 2px; }
-        .cursor-label { font-size: 0.55rem; font-weight: 700; color: oklch(0% 0 0); letter-spacing: 0.1em; text-transform: uppercase; opacity: 0; transition: opacity .15s; white-space: nowrap; }
-        .cursor--hover .cursor-label { opacity: 1; }
-        @media(pointer: coarse), (max-width: 1024px) { .cursor { display: none !important; } body, a, button, input, textarea { cursor: auto !important; } }
+        /* 3-State Cursor System */
+        #cur-dot { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); transform: translate(-50%, -50%); transition: opacity 0.25s; opacity: 0; box-shadow: 0 0 10px oklch(83.5% 0.17 84 / 80%); }
+        #cur-ring { position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none; width: 32px; height: 32px; border: 1px solid oklch(83.5% 0.17 84 / 50%); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.3s cubic-bezier(0.16,1,0.3,1), height 0.3s cubic-bezier(0.16,1,0.3,1), background 0.3s, border-color 0.3s, border-radius 0.3s, opacity 0.25s; opacity: 0; display: flex; align-items: center; justify-content: center; }
+        #cur-label { font-size: 0.55rem; font-weight: 700; color: oklch(0% 0 0); letter-spacing: 0.1em; text-transform: uppercase; opacity: 0; transition: opacity 0.15s; white-space: nowrap; }
+
+        body.cur-hover #cur-ring { width: 56px; height: 56px; background: oklch(83.5% 0.17 84 / 10%); border-color: transparent; }
+        body.cur-text #cur-ring { width: 88px; height: 32px; background: var(--accent); border-color: transparent; border-radius: 100px; box-shadow: 0 0 32px oklch(83.5% 0.17 84 / 40%); }
+        body.cur-text #cur-label { opacity: 1; }
+        body.cur-image #cur-ring { width: 88px; height: 88px; background: var(--accent); border-color: transparent; box-shadow: 0 0 32px oklch(83.5% 0.17 84 / 40%); }
+        body.cur-image #cur-label { opacity: 1; }
+        body.cur-input #cur-ring { width: 2px; height: 24px; background: var(--accent); border-color: transparent; border-radius: 2px; }
+
+        @media(pointer: coarse), (max-width: 1024px) {
+            #cur-dot, #cur-ring { display: none !important; }
+            body, a, button, input, textarea { cursor: auto !important; }
+        }
+
+        /* Mobile Menu & UI Enhancements */
+        #mobile-menu.open { opacity: 1; pointer-events: auto; visibility: visible; }
+        #mobile-menu:not(.open) { pointer-events: none; visibility: hidden; }
+        .mobile-nav-link::before {
+            content: attr(data-num); font-family: 'Syne', sans-serif;
+            font-style: normal; font-size: 0.65rem; letter-spacing: 0.2em; 
+            color: var(--accent); font-weight: 800; opacity: 0.8;
+        }
+        #menu-toggle.open span:nth-child(1) { transform: translateY(3.5px) rotate(45deg); }
+        #menu-toggle.open span:nth-child(2) { transform: translateY(-3.5px) rotate(-45deg); }
+        button, [role="button"], a.btn-glass-cta, .mobile-nav-link { min-height: 48px; min-width: 48px; }
 
         #hero-veil { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 2.2s cubic-bezier(0.16,1,0.3,1); mask-image: radial-gradient(ellipse 95% 80% at 50% 38%, black 15%, oklch(0% 0 0 / 90%) 40%, oklch(0% 0 0 / 50%) 65%, transparent 88%); -webkit-mask-image: radial-gradient(ellipse 95% 80% at 50% 38%, black 15%, oklch(0% 0 0 / 90%) 40%, oklch(0% 0 0 / 50%) 65%, transparent 88%); }
         #hero-veil.veil-ready { opacity: 0.40; }
@@ -127,7 +149,7 @@
         .nav-link:hover::after { transform: scaleX(1); }
 
         @property --btn-border-angle { syntax: '<angle>'; inherits: false; initial-value: -75deg; }
-        .btn-glass-cta { position: relative; overflow: hidden; background: linear-gradient(160deg, oklch(100% 0 0 / 14%) 0%, oklch(100% 0 0 / 6%) 50%, oklch(83.5% 0.17 84 / 10%) 100%); backdrop-filter: blur(16px); box-shadow: inset 0 1px 0 oklch(100% 0 0 / 15%), 0 8px 32px rgba(0,0,0,0.6); transition: transform .3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow .3s; min-height: 44px; min-width: 44px; border: none; }
+        .btn-glass-cta { position: relative; overflow: hidden; background: linear-gradient(160deg, oklch(100% 0 0 / 14%) 0%, oklch(100% 0 0 / 6%) 50%, oklch(83.5% 0.17 84 / 10%) 100%); backdrop-filter: blur(16px); box-shadow: inset 0 1px 0 oklch(100% 0 0 / 15%), 0 8px 32px rgba(0,0,0,0.6); transition: transform .3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow .3s; border: none; }
         .btn-glass-cta::after { content: ''; position: absolute; inset: 0; border-radius: 999px; padding: 1px; box-sizing: border-box; background: conic-gradient(from var(--btn-border-angle) at 50% 50%, transparent 0%, oklch(100% 0 0 / 75%) 12%, oklch(83.5% 0.17 84 / 60%) 22%, transparent 35%, transparent 65%, oklch(83.5% 0.17 84 / 40%) 78%, oklch(100% 0 0 / 55%) 88%, transparent 100%); mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: destination-out; pointer-events: none; opacity: 0; transition: opacity 0.4s, --btn-border-angle 700ms; z-index: 2; }
         .btn-glass-cta:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 oklch(100% 0 0 / 25%), 0 16px 48px rgba(0,0,0,0.8); }
         .btn-glass-cta:hover::after { opacity: 1; --btn-border-angle: -145deg; }
@@ -162,6 +184,14 @@
         .reveal-up.in-view { opacity: 1; transform: translateY(0); transition: opacity 1.15s cubic-bezier(0.16, 1, 0.3, 1), transform 1.15s cubic-bezier(0.16, 1, 0.3, 1); will-change: auto; }
 
         .hover-trigger * { pointer-events: none; }
+
+        /* Ghost Word CSS */
+        .section-bg-word {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -48%);
+            font-family: 'Syne', sans-serif; font-size: 28vw; font-weight: 800; font-style: italic;
+            color: oklch(100% 0 0 / 0.015);
+            white-space: nowrap; pointer-events: none; user-select: none; line-height: 1; z-index: 0;
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-accent/30 selection:text-white">
@@ -172,11 +202,19 @@
 
 <div id="scrollProgress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-accent to-accent2 z-[9999] w-0 pointer-events-none shadow-[0_0_8px_oklch(83.5%_0.17_84/50%)]"></div>
 
-<button id="dynamicScrollBtn" class="btn-glass-cta active:scale-[0.98] fixed bottom-[clamp(1.5rem,4vw,2.5rem)] left-[clamp(1.5rem,4vw,2.5rem)] z-[90] w-[46px] h-[46px] min-w-[46px] rounded-full flex items-center justify-center text-white/50 hover:text-accent transition-all duration-[400ms] group focus:outline-none" aria-label="Scroll to contact" data-cursor="CLICK">
+<button id="dynamicScrollBtn" class="btn-glass-cta active:scale-[0.98] fixed bottom-[clamp(1.5rem,4vw,2.5rem)] left-[clamp(1.5rem,4vw,2.5rem)] z-[90] w-[48px] h-[48px] min-w-[48px] rounded-full flex items-center justify-center text-white/50 hover:text-accent transition-all duration-[400ms] group focus:outline-none max-md:hidden" aria-label="Scroll to contact" data-cursor="CLICK">
     <svg id="scrollArrow" class="w-[18px] h-[18px] transition-transform duration-[800ms] ease-spring group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
 </button>
 
-<div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-label" id="cursorLabel"></span></div>
+<!-- Mobile Floating CTA Pill -->
+<a href="#contact" id="res-pill" class="md:hidden fixed bottom-[clamp(1.5rem,4vw,2rem)] left-1/2 -translate-x-1/2 z-[990] flex items-center justify-center gap-2 px-6 h-[48px] min-w-[48px] rounded-full bg-gradient-to-r from-accent2 to-accent text-obsidian font-extrabold text-[0.7rem] uppercase tracking-[0.1em] shadow-[0_12px_24px_oklch(83.5%_0.17_84/0.3)] transition-all duration-[600ms] opacity-0 translate-y-[100px] pointer-events-none hover:scale-105 active:scale-95" data-cursor="START">
+    <span>Start Project</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+</a>
+
+<!-- 3-State Cursor HTML -->
+<div id="cur-dot" aria-hidden="true"></div>
+<div id="cur-ring" aria-hidden="true"><span id="cur-label"></span></div>
 
 <div id="ga-loader" aria-hidden="true">
     <div class="flex flex-col items-center gap-7">
@@ -190,8 +228,19 @@
     </div>
 </div>
 
-<nav id="navbar" class="hud-nav fixed top-5 left-1/2 -translate-x-1/2 w-[calc(100%-clamp(3rem,11vw,10rem))] max-w-[1200px] h-16 px-6 lg:px-8 flex justify-between items-center z-[100] rounded-full bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)]" aria-label="Primary navigation">
-    <a href="#hero" aria-label="Home" class="z-10 flex items-center h-full min-w-[44px] hover:opacity-80 transition-opacity active:scale-[0.98]">
+<!-- Full-screen Mobile Menu -->
+<div id="mobile-menu" class="fixed inset-0 z-[9500] bg-obsidian/98 backdrop-blur-xl flex flex-col items-start justify-center px-[clamp(2.5rem,8vw,4rem)] opacity-0 transition-opacity duration-500" aria-hidden="true">
+    <a href="#portfolio" data-num="01" class="mobile-nav-link w-full border-b border-white/5 py-6 flex items-center gap-6 text-[clamp(2.2rem,8vw,3.5rem)] font-extrabold italic text-white/60 hover:text-white transition-colors" data-cursor="CLICK">Work</a>
+    <a href="#expertise" data-num="02" class="mobile-nav-link w-full border-b border-white/5 py-6 flex items-center gap-6 text-[clamp(2.2rem,8vw,3.5rem)] font-extrabold italic text-white/60 hover:text-white transition-colors" data-cursor="CLICK">Services</a>
+    <a href="#about" data-num="03" class="mobile-nav-link w-full border-b border-white/5 py-6 flex items-center gap-6 text-[clamp(2.2rem,8vw,3.5rem)] font-extrabold italic text-white/60 hover:text-white transition-colors" data-cursor="CLICK">About</a>
+    <a href="#how-it-starts" data-num="04" class="mobile-nav-link w-full border-b border-white/5 py-6 flex items-center gap-6 text-[clamp(2.2rem,8vw,3.5rem)] font-extrabold italic text-white/60 hover:text-white transition-colors" data-cursor="CLICK">Process</a>
+    <a href="#faq" data-num="05" class="mobile-nav-link w-full border-b border-white/5 py-6 flex items-center gap-6 text-[clamp(2.2rem,8vw,3.5rem)] font-extrabold italic text-white/60 hover:text-white transition-colors" data-cursor="CLICK">FAQ</a>
+    <a href="#contact" data-num="06" class="mobile-nav-link w-full py-6 flex items-center gap-6 text-[clamp(2.2rem,8vw,3.5rem)] font-extrabold italic text-accent transition-colors" data-cursor="START">Start Project</a>
+    <div class="absolute bottom-10 left-[clamp(2.5rem,8vw,4rem)] text-[0.6rem] font-bold tracking-[0.3em] uppercase text-white/30">Ghaidak Studio</div>
+</div>
+
+<nav id="navbar" class="hud-nav fixed top-5 left-1/2 -translate-x-1/2 w-[calc(100%-clamp(2rem,8vw,10rem))] max-w-[1200px] h-16 px-5 lg:px-8 flex justify-between items-center z-[9600] rounded-full bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)]" aria-label="Primary navigation">
+    <a href="#hero" aria-label="Home" class="z-10 flex items-center h-full min-w-[48px] hover:opacity-80 transition-opacity active:scale-[0.98]">
         <img src="logo.svg" alt="GA." class="h-5 w-auto">
     </a>
     <div class="hidden md:flex items-center gap-8 text-[0.68rem] font-bold uppercase tracking-[0.08em]">
@@ -201,8 +250,14 @@
         <a href="#how-it-starts" class="nav-link">Process</a>
         <a href="#faq" class="nav-link">FAQ</a>
     </div>
-    <div class="flex items-center z-10">
-        <a href="#contact" class="btn-glass-cta active:scale-[0.98] flex items-center justify-center px-5 h-[44px] rounded-full text-[0.65rem] font-bold uppercase tracking-[0.07em]">Work with me</a>
+    <div class="flex items-center z-10 gap-3">
+        <a href="#contact" class="hidden md:flex btn-glass-cta active:scale-[0.98] items-center justify-center px-6 h-[48px] min-w-[48px] rounded-full text-[0.65rem] font-bold uppercase tracking-[0.07em]">Work with me</a>
+        
+        <!-- Mobile Hamburger -->
+        <button id="menu-toggle" class="md:hidden flex flex-col justify-center items-center gap-[5px] w-[48px] h-[48px] min-w-[48px] rounded-full bg-white/5 border border-white/10 active:scale-95 transition-all" aria-label="Toggle menu" aria-expanded="false" data-cursor="CLICK">
+            <span class="w-5 h-[2px] bg-white rounded-full transition-transform duration-300 origin-center"></span>
+            <span class="w-5 h-[2px] bg-white rounded-full transition-transform duration-300 origin-center"></span>
+        </button>
     </div>
 </nav>
 
@@ -219,7 +274,7 @@
                     The gap is costing you work.
                 </h1>
                 <div class="mt-8 sm:mt-10 flex items-center reveal-up" style="animation-delay: 0.4s;">
-                    <a href="#contact" class="btn-glass-cta active:scale-[0.98] flex items-center justify-center px-8 h-[52px] rounded-full text-[0.7rem] font-bold uppercase tracking-[0.1em] text-white hover-trigger" data-cursor="CLICK">
+                    <a href="#contact" class="btn-glass-cta active:scale-[0.98] flex items-center justify-center px-8 h-[52px] min-w-[48px] rounded-full text-[0.7rem] font-bold uppercase tracking-[0.1em] text-white hover-trigger" data-cursor="CLICK">
                         Start a Project <svg class="w-[14px] h-[14px] ml-3 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
@@ -538,34 +593,38 @@
         </div>
     </section>
 
-    <section id="faq" class="py-[clamp(4rem,8vw,8rem)] px-[clamp(1.5rem,5.5vw,5rem)] bg-obsidian max-w-[1400px] mx-auto pt-24">
-        <div class="flex flex-col md:flex-row md:items-end justify-between pb-12 mb-16 reveal-up">
-            <h2 class="text-[clamp(2.4rem,4.8vw,4.5rem)] font-extrabold uppercase tracking-tight leading-[0.92]">Questions</h2>
-            <span class="text-[0.58rem] font-bold text-white/60 tracking-[0.18em] uppercase mt-2 md:mt-0">The ones founders actually ask.</span>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="p-8 rounded-2xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-all duration-[400ms] hover:-translate-y-1 hover:bg-white/[0.05] hover:shadow-[0_16px_48px_rgba(0,0,0,0.8)] reveal-up hover-trigger" data-cursor="READ">
-                <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-3">How long does a project take?</h3>
-                <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/55 leading-[1.65]">Brand identity: 2–3 weeks. Full brand system with guidelines: 4–6 weeks. Pitch deck: 5–7 days. Timeline is locked in the brief — I don't move goalposts.</p>
+    <!-- SECTION RHYTHM LAW - FAQ updated to dark mode -->
+    <section id="faq" class="w-full py-[clamp(4rem,8vw,8rem)] px-[clamp(1.5rem,5.5vw,5rem)] bg-obsidian pt-24 relative z-20">
+        <div class="max-w-[1400px] mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between pb-12 mb-16 reveal-up">
+                <h2 class="text-[clamp(2.4rem,4.8vw,4.5rem)] font-extrabold uppercase tracking-tight leading-[0.92]">Questions</h2>
+                <span class="text-[0.58rem] font-bold text-white/60 tracking-[0.18em] uppercase mt-2 md:mt-0">The ones founders actually ask.</span>
             </div>
-            <div class="p-8 rounded-2xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-all duration-[400ms] hover:-translate-y-1 hover:bg-white/[0.05] hover:shadow-[0_16px_48px_rgba(0,0,0,0.8)] reveal-up hover-trigger delay-[120ms]" data-cursor="READ">
-                <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-3">Do you work with international clients remotely?</h3>
-                <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/55 leading-[1.65]">All of my clients are international. Every project runs fully remote — async-first, with structured check-ins. US, Europe, Middle East — no time zone has ever been a blocker.</p>
-            </div>
-            <div class="p-8 rounded-2xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-all duration-[400ms] hover:-translate-y-1 hover:bg-white/[0.05] hover:shadow-[0_16px_48px_rgba(0,0,0,0.8)] reveal-up hover-trigger" data-cursor="READ">
-                <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-3">What if I don't like the direction?</h3>
-                <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/55 leading-[1.65]">We align on strategy before a single pixel is placed. You approve the direction in writing before I build on it. Revisions are structured — not open-ended loops.</p>
-            </div>
-            <div class="p-8 rounded-2xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-all duration-[400ms] hover:-translate-y-1 hover:bg-white/[0.05] hover:shadow-[0_16px_48px_rgba(0,0,0,0.8)] reveal-up hover-trigger delay-[120ms]" data-cursor="READ">
-                <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-3">Do you sign NDAs?</h3>
-                <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/55 leading-[1.65]">Yes, on request. Standard NDA or client-provided. Either way, your project information stays confidential.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="spotlight-card p-8 rounded-2xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-all duration-[400ms] hover:-translate-y-1 hover:bg-white/[0.05] hover:shadow-[0_16px_48px_rgba(0,0,0,0.8)] reveal-up hover-trigger" data-cursor="READ">
+                    <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-3">How long does a project take?</h3>
+                    <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/70 leading-[1.65]">Brand identity: 2–3 weeks. Full brand system with guidelines: 4–6 weeks. Pitch deck: 5–7 days. Timeline is locked in the brief — I don't move goalposts.</p>
+                </div>
+                <div class="spotlight-card p-8 rounded-2xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-all duration-[400ms] hover:-translate-y-1 hover:bg-white/[0.05] hover:shadow-[0_16px_48px_rgba(0,0,0,0.8)] reveal-up hover-trigger delay-[120ms]" data-cursor="READ">
+                    <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-3">Do you work with international clients remotely?</h3>
+                    <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/70 leading-[1.65]">All of my clients are international. Every project runs fully remote — async-first, with structured check-ins. US, Europe, Middle East — no time zone has ever been a blocker.</p>
+                </div>
+                <div class="spotlight-card p-8 rounded-2xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-all duration-[400ms] hover:-translate-y-1 hover:bg-white/[0.05] hover:shadow-[0_16px_48px_rgba(0,0,0,0.8)] reveal-up hover-trigger" data-cursor="READ">
+                    <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-3">What if I don't like the direction?</h3>
+                    <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/70 leading-[1.65]">We align on strategy before a single pixel is placed. You approve the direction in writing before I build on it. Revisions are structured — not open-ended loops.</p>
+                </div>
+                <div class="spotlight-card p-8 rounded-2xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-all duration-[400ms] hover:-translate-y-1 hover:bg-white/[0.05] hover:shadow-[0_16px_48px_rgba(0,0,0,0.8)] reveal-up hover-trigger delay-[120ms]" data-cursor="READ">
+                    <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-3">Do you sign NDAs?</h3>
+                    <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/70 leading-[1.65]">Yes, on request. Standard NDA or client-provided. Either way, your project information stays confidential.</p>
+                </div>
             </div>
         </div>
     </section>
 
     <section id="contact" class="relative bg-surface py-[clamp(4.5rem,8vh,8rem)] overflow-hidden pt-32">
-        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[60vh] bg-[radial-gradient(ellipse_55%_60%_at_50%_100%,oklch(83.5%_0.17_84/8%)_0%,oklch(83.5%_0.17_84/3%)_40%,transparent_72%)] pointer-events-none"></div>
+        <div class="section-bg-word">START</div>
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[60vh] bg-[radial-gradient(ellipse_55%_60%_at_50%_100%,oklch(83.5%_0.17_84/8%)_0%,oklch(83.5%_0.17_84/3%)_40%,transparent_72%)] pointer-events-none z-0"></div>
         
         <div class="max-w-[1400px] mx-auto px-[clamp(1.5rem,5.5vw,5rem)] grid lg:grid-cols-[1fr_1.1fr] gap-[clamp(3rem,6vw,7rem)] items-start relative z-10">
             <div class="flex flex-col gap-8 reveal-up">
@@ -868,41 +927,57 @@ if (window.gsap && window.ScrollTrigger && !REDUCED_MO) {
     document.querySelectorAll('.reveal-up').forEach(el => el.classList.add('in-view'));
 }
 
+/* 3-State Cursor Initialization */
+const MQ_CURSOR = window.matchMedia('(hover:hover) and (pointer:fine)');
+
 const initCursor = () => {
-    if (MQ_MOBILE.matches || REDUCED_MO || !window.gsap) return;
-    const cursor = document.getElementById('cursor');
-    const cursorLabel = document.getElementById('cursorLabel');
-    document.body.style.cursor = 'none';
+    if (MQ_MOBILE.matches || REDUCED_MO || !MQ_CURSOR.matches) return;
     
-    gsap.set(cursor, { xPercent: -50, yPercent: -50 });
-    const xTo = gsap.quickTo(cursor, 'x', { duration: 0.38, ease: 'power3.out' });
-    const yTo = gsap.quickTo(cursor, 'y', { duration: 0.38, ease: 'power3.out' });
+    const dot = document.getElementById('cur-dot');
+    const ring = document.getElementById('cur-ring');
+    const lbl = document.getElementById('cur-label');
+    if (!dot || !ring) return;
 
+    let mx = -200, my = -200, rx = -200, ry = -200;
+    
     window.addEventListener('mousemove', e => {
-        xTo(e.clientX); yTo(e.clientY);
-        cursor.style.opacity = '1';
+        mx = e.clientX; my = e.clientY;
+        dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
     }, { passive: true });
-    window.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+    
+    window.addEventListener('mouseleave', () => {
+        dot.style.opacity = '0';
+        ring.style.opacity = '0';
+    });
 
-    document.body.addEventListener('mouseover', e => {
-        const target = e.target.closest('[data-cursor], a, button, input, textarea, select, .qf-submit');
-        
-        if (target && !target.closest('#navbar')) {
-            if (target.dataset.cursor) {
-                cursor.className = 'cursor cursor--hover';
-                cursorLabel.textContent = target.dataset.cursor;
-            } else if (target.matches('input, textarea, select')) {
-                cursor.className = 'cursor cursor--text';
-                cursorLabel.textContent = '';
+    (function animRing() {
+        rx += (mx - rx) * 0.1; ry += (my - ry) * 0.1;
+        ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+        requestAnimationFrame(animRing);
+    })();
+
+    function setCursorState(state, label) {
+        document.body.classList.remove('cur-hover', 'cur-text', 'cur-image', 'cur-input');
+        if (state) document.body.classList.add(state);
+        if (lbl) lbl.textContent = label || '';
+    }
+
+    document.querySelectorAll('[data-cursor], a, button, input, textarea, select, .qf-submit, .hover-trigger').forEach(function(el) {
+        el.addEventListener('mouseenter', function(e) {
+            e.stopPropagation();
+            const cursorVal = el.dataset.cursor;
+            if (cursorVal) {
+                setCursorState('cur-text', cursorVal);
+            } else if (el.matches('input, textarea, select')) {
+                setCursorState('cur-input', '');
             } else {
-                cursor.className = 'cursor cursor--hover';
-                cursorLabel.textContent = 'CLICK';
+                setCursorState('cur-hover', '');
             }
-        } else {
-            cursor.className = 'cursor';
-            cursorLabel.textContent = '';
-        }
-    }, { passive: true });
+        });
+        el.addEventListener('mouseleave', function() { setCursorState(''); });
+    });
 };
 window.addEventListener('load', initCursor);
 
@@ -1068,6 +1143,52 @@ function initDarkVeil() {
 }
 if ('requestIdleCallback' in window) requestIdleCallback(initDarkVeil, { timeout: 2500 });
 else setTimeout(initDarkVeil, 800);
+
+// Mobile Menu Initialization
+function initMobileMenu() {
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-menu');
+    const links = menu ? menu.querySelectorAll('.mobile-nav-link') : [];
+    if(!toggle || !menu) return;
+
+    function closeMenu() {
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    toggle.addEventListener('click', () => {
+        const isOpen = toggle.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen);
+        if(isOpen) {
+            menu.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        } else {
+            menu.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    });
+
+    links.forEach(link => link.addEventListener('click', closeMenu));
+}
+window.addEventListener('DOMContentLoaded', initMobileMenu);
+
+// Floating Pill Initialization
+function initFloatingPill() {
+    const pill = document.getElementById('res-pill');
+    if(!pill) return;
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > window.innerHeight * 0.4) {
+            pill.classList.remove('opacity-0', 'translate-y-[100px]', 'pointer-events-none');
+            pill.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+        } else {
+            pill.classList.add('opacity-0', 'translate-y-[100px]', 'pointer-events-none');
+            pill.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+        }
+    }, { passive: true });
+}
+window.addEventListener('DOMContentLoaded', initFloatingPill);
 
 </script>
 </body>

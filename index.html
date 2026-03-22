@@ -560,7 +560,9 @@
                     <h3 class="text-[clamp(1.1rem,1.6vw,1.35rem)] font-extrabold uppercase tracking-tight mb-3">Senior Brand Strategist.</h3>
                     <p class="text-[clamp(0.95rem,1.3vw,1.05rem)] text-white/70 leading-[1.85] mb-4 max-w-[48ch]">
                         Six years. 200+ projects. US, Europe, the Middle East.<br><br>
+                        
                         I work directly with founders — no studio overhead, no junior designers touching your work. Every project is strategy first: I need to understand why your business wins before I design how it looks.<br><br>
+                        
                         That's the difference between a brand that looks good and one that closes deals.
                     </p>
                     
@@ -962,37 +964,56 @@ if (window.gsap && window.ScrollTrigger && !REDUCED_MO) {
 
 const initCursor = () => {
     if (MQ_MOBILE.matches || REDUCED_MO || !window.gsap) return;
-    const cursor = document.getElementById('cursor');
-    const cursorLabel = document.getElementById('cursorLabel');
+    
+    // FIX: Using exact IDs from your HTML
+    const curRing = document.getElementById('cur-ring');
+    const curDot = document.getElementById('cur-dot');
+    const curLabel = document.getElementById('cur-label');
+    
+    // Safety check to prevent any null errors
+    if (!curRing || !curDot || !curLabel) return;
+    
     document.body.style.cursor = 'none';
     
-    gsap.set(cursor, { xPercent: -50, yPercent: -50 });
-    const xTo = gsap.quickTo(cursor, 'x', { duration: 0.38, ease: 'power3.out' });
-    const yTo = gsap.quickTo(cursor, 'y', { duration: 0.38, ease: 'power3.out' });
+    gsap.set([curRing, curDot], { xPercent: -50, yPercent: -50 });
+    
+    const ringXTo = gsap.quickTo(curRing, 'x', { duration: 0.38, ease: 'power3.out' });
+    const ringYTo = gsap.quickTo(curRing, 'y', { duration: 0.38, ease: 'power3.out' });
+    const dotXTo = gsap.quickTo(curDot, 'x', { duration: 0.1, ease: 'power3.out' });
+    const dotYTo = gsap.quickTo(curDot, 'y', { duration: 0.1, ease: 'power3.out' });
 
     window.addEventListener('mousemove', e => {
-        xTo(e.clientX); yTo(e.clientY);
-        cursor.style.opacity = '1';
+        ringXTo(e.clientX); ringYTo(e.clientY);
+        dotXTo(e.clientX); dotYTo(e.clientY);
+        curRing.style.opacity = '1';
+        curDot.style.opacity = '1';
     }, { passive: true });
-    window.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+    
+    window.addEventListener('mouseleave', () => {
+        curRing.style.opacity = '0';
+        curDot.style.opacity = '0';
+    });
 
     document.body.addEventListener('mouseover', e => {
         const target = e.target.closest('[data-cursor], a, button, input, textarea, select, .qf-submit');
         
+        // Clean state
+        document.body.classList.remove('cur-hover', 'cur-text', 'cur-image', 'cur-input');
+        curLabel.textContent = '';
+        
         if (target && !target.closest('#navbar')) {
             if (target.dataset.cursor) {
-                cursor.className = 'cursor cursor--hover';
-                cursorLabel.textContent = target.dataset.cursor;
+                if(target.dataset.cursor === 'VIEW' || target.dataset.cursor === 'LOOK') {
+                    document.body.classList.add('cur-image');
+                } else {
+                    document.body.classList.add('cur-text');
+                }
+                curLabel.textContent = target.dataset.cursor;
             } else if (target.matches('input, textarea, select')) {
-                cursor.className = 'cursor cursor--text';
-                cursorLabel.textContent = '';
+                document.body.classList.add('cur-input');
             } else {
-                cursor.className = 'cursor cursor--hover';
-                cursorLabel.textContent = 'CLICK';
+                document.body.classList.add('cur-hover');
             }
-        } else {
-            cursor.className = 'cursor';
-            cursorLabel.textContent = '';
         }
     }, { passive: true });
 };

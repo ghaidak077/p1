@@ -18,7 +18,7 @@
 
   # Content Security Policy — Elite-tier whitelist (CDNs, Analytics, and Extension Bypass)
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://usebasin.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://cloudflareinsights.com https://www.clarity.ms https://c.clarity.ms https://cdn.jsdelivr.net; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://usebasin.com; upgrade-insecure-requests;
-
+  
   # Permissions Policy (2026)
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=(), picture-in-picture=(), screen-wake-lock=(), web-share=()
 

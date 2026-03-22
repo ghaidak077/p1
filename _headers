@@ -16,8 +16,8 @@
   # Referrer: send origin only on cross-origin HTTPS requests
   Referrer-Policy: strict-origin-when-cross-origin
 
-  # Content Security Policy (Updated for single-file Tailwind CDN)
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://usebasin.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://cloudflareinsights.com https://www.clarity.ms https://c.clarity.ms; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://usebasin.com; upgrade-insecure-requests;
+  # Content Security Policy — added 'unsafe-eval' for Tailwind CDN, explicit worker-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://usebasin.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://cloudflareinsights.com https://www.clarity.ms https://c.clarity.ms; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://usebasin.com; upgrade-insecure-requests;
 
   # Permissions Policy (2026)
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=(), picture-in-picture=(), screen-wake-lock=(), web-share=()
@@ -29,7 +29,7 @@
   # Hide server fingerprint
   X-Powered-By: none
 
-  # Cache: HTML — always revalidate 
+  # Cache: HTML — always revalidate
   Cache-Control: public, max-age=0, must-revalidate
 
 # ── Static assets: 1-year immutable ──

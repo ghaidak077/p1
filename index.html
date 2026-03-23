@@ -300,21 +300,21 @@
     <section id="hero" class="relative min-h-[100svh] flex flex-col justify-center px-[clamp(1.25rem,6vw,5rem)] max-w-[1400px] mx-auto pt-[calc(64px+clamp(3rem,5vw,5rem))] pb-[clamp(2.5rem,4vw,4rem)] overflow-hidden">
         <canvas id="hero-veil" aria-hidden="true" role="presentation"></canvas>
         
-        <div class="hero-top relative z-10 grid lg:grid-cols-[1fr_280px] gap-12 items-end pb-[clamp(2rem,3vw,2.5rem)]">
-            <div>
-                <p class="font-bold text-[clamp(0.6rem,0.9vw,0.75rem)] uppercase tracking-[0.2em] text-white/45 mb-3">Most founders compete on skill.</p>
-                <h1 class="mega-type text-[clamp(2rem,9vw,5.5rem)] font-extrabold leading-[0.95] tracking-tight">
-                    Clients decide on<br>
-                    <span class="text-accent relative inline-block">perception.</span><br>
-                    The gap is costing you work.
+        <div class="hero-top relative z-10 grid lg:grid-cols-[1fr_auto] gap-12 lg:gap-16 items-end pb-[clamp(2rem,3vw,2.5rem)]">
+            <div class="flex flex-col justify-center max-w-[900px]">
+                <p class="font-bold text-[clamp(0.6rem,0.9vw,0.75rem)] uppercase tracking-[0.2em] text-white/45 mb-5 md:mb-6 pl-1">Most founders compete on skill.</p>
+                <h1 class="mega-type font-extrabold tracking-[-0.02em] leading-[1.05] text-[clamp(2.5rem,5.5vw,5rem)] text-white">
+                    Clients decide on 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent2 filter drop-shadow-[0_0_24px_oklch(83.5%_0.17_84/0.3)]">perception.</span>
+                    <span class="block mt-4 md:mt-6 text-[clamp(1.1rem,2vw,1.6rem)] font-bold text-white/50 tracking-normal leading-[1.4] max-w-[30ch]">The gap is costing you work.</span>
                 </h1>
-                <div class="mt-8 sm:mt-10 flex items-center reveal-up" style="animation-delay: 0.4s;">
+                <div class="mt-8 sm:mt-12 flex items-center reveal-up" style="animation-delay: 0.4s;">
                     <a href="#contact" class="btn-glass-cta active:scale-[0.98] flex items-center justify-center px-[clamp(1.5rem,5vw,2rem)] h-[52px] min-w-[48px] rounded-full text-[0.7rem] font-bold uppercase tracking-[0.1em] text-white hover-trigger" data-cursor="CLICK">
                         Start a Project <svg class="w-[14px] h-[14px] ml-3 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
             </div>
-            <div class="flex flex-col gap-6 self-end pb-1 md:pl-10">
+            <div class="flex flex-col gap-6 self-end pb-1 lg:pl-12 lg:border-l border-white/10 relative min-w-[220px]">
                 <div>
                     <span class="block text-[0.56rem] font-bold uppercase tracking-[0.16em] text-white/45">Experience</span>
                     <span class="block text-[0.82rem] font-bold text-accent mt-1">6 Years</span>
@@ -660,16 +660,16 @@
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[60vh] bg-[radial-gradient(ellipse_55%_60%_at_50%_100%,oklch(83.5%_0.17_84/8%)_0%,oklch(83.5%_0.17_84/3%)_40%,transparent_72%)] pointer-events-none"></div>
         
         <div class="max-w-[1400px] mx-auto px-[clamp(1.25rem,6vw,5rem)] grid lg:grid-cols-[1fr_1.1fr] gap-[clamp(3rem,6vw,7rem)] items-start relative z-10">
-            <div class="flex flex-col gap-8 reveal-up">
-                <p class="font-bold text-[0.6rem] text-white/45 uppercase tracking-[0.2em] -mb-4">Limited capacity. Serious inquiries only.</p>
-                <h2 class="font-extrabold text-[clamp(1.5rem,7.5vw,3.4rem)] uppercase tracking-tight leading-[1.05]">
-                    Your competitors<br>
-                    <span class="text-accent">aren't better.</span><br>
-                    They just invested in looking like they are.
+            <div class="flex flex-col gap-6 md:gap-8 reveal-up">
+                <p class="font-bold text-[0.6rem] text-white/45 uppercase tracking-[0.2em] mb-1">Limited capacity. Serious inquiries only.</p>
+                <h2 class="font-extrabold tracking-[-0.02em] leading-[1.05] text-[clamp(2.2rem,5vw,4.5rem)] text-white">
+                    Your competitors 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent2 filter drop-shadow-[0_0_24px_oklch(83.5%_0.17_84/0.3)]">aren't better.</span>
+                    <span class="block mt-4 md:mt-6 text-[clamp(1.1rem,1.8vw,1.4rem)] font-bold text-white/50 tracking-normal leading-[1.45] max-w-[34ch]">They just invested in looking like they are.</span>
                 </h2>
-                <p class="font-normal text-[clamp(0.88rem,1.2vw,0.95rem)] text-white/70 leading-[1.75]">I don't take on more than 3 projects at once. Most slots are running. If the timing is right — let's talk.</p>
+                <p class="font-normal text-[clamp(0.88rem,1.2vw,0.95rem)] text-white/70 leading-[1.75] max-w-[44ch] mt-2">I don't take on more than 3 projects at once. Most slots are running. If the timing is right — let's talk.</p>
                 
-                <div class="flex flex-col mt-8 gap-6">
+                <div class="flex flex-col mt-6 md:mt-8 gap-6">
                     <a href="https://wa.link/649ato" target="_blank" rel="noopener noreferrer" class="group relative flex justify-between items-center p-[clamp(1.25rem,2.5vw,1.75rem)] rounded-[20px] bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.03)] hover:bg-white/[0.05] hover:shadow-[0_16px_48px_rgba(0,0,0,0.8)] transition-all duration-[400ms] hover:-translate-y-1 hover-trigger active:scale-[0.98]" data-cursor="REACH">
                         <div class="flex items-center gap-5 md:gap-6">
                             <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-whatsapp/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-[400ms] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_0_20px_oklch(76%_0.17_151/20%)] shrink-0">

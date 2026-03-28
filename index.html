@@ -159,10 +159,6 @@
         .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
         .lenis.lenis-stopped { overflow: hidden; }
 
-        #ga-loader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; transform: translateY(0); transition: transform 0.65s cubic-bezier(0.76,0,0.24,1); will-change: transform; }
-        #ga-loader.ga-loader--out { transform: translateY(-100%); }
-        .ga-loader-bar { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, oklch(83.5% 0.17 84), oklch(88% 0.134 86)); box-shadow: 0 0 12px oklch(83.5% 0.17 84 / 60%); }
-
         /* 3-State Cursor System */
         #cur-dot { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); transform: translate(-50%, -50%); transition: opacity 0.25s; opacity: 0; box-shadow: 0 0 10px oklch(83.5% 0.17 84 / 80%); }
         #cur-ring { position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none; width: 32px; height: 32px; border: 1px solid oklch(83.5% 0.17 84 / 50%); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.3s cubic-bezier(0.16,1,0.3,1), height 0.3s cubic-bezier(0.16,1,0.3,1), background 0.3s, border-color 0.3s, border-radius 0.3s, opacity 0.25s; opacity: 0; display: flex; align-items: center; justify-content: center; }
@@ -241,9 +237,7 @@
         @property --btn-border-angle { syntax: '<angle>'; inherits: false; initial-value: -75deg; }
         .btn-glass-cta { position: relative; overflow: hidden; background: linear-gradient(160deg, oklch(100% 0 0 / 14%) 0%, oklch(100% 0 0 / 6%) 50%, oklch(83.5% 0.17 84 / 10%) 100%); backdrop-filter: blur(16px); box-shadow: inset 0 1px 0 oklch(100% 0 0 / 15%), 0 8px 32px oklch(5% 0 0 / 60%); transition: transform .3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow .3s; border: none; }
         .btn-glass-cta::after { content: ''; position: absolute; inset: 0; border-radius: 999px; padding: 1px; box-sizing: border-box; background: conic-gradient(from var(--btn-border-angle) at 50% 50%, transparent 0%, oklch(100% 0 0 / 75%) 12%, oklch(83.5% 0.17 84 / 60%) 22%, transparent 35%, transparent 65%, oklch(83.5% 0.17 84 / 40%) 78%, oklch(100% 0 0 / 55%) 88%, transparent 100%); mask: linear-gradient(oklch(5% 0 0) 0 0) content-box, linear-gradient(oklch(5% 0 0) 0 0); mask-composite: exclude; -webkit-mask: linear-gradient(oklch(5% 0 0) 0 0) content-box, linear-gradient(oklch(5% 0 0) 0 0); -webkit-mask-composite: destination-out; pointer-events: none; opacity: 0; transition: opacity 0.4s, --btn-border-angle 700ms; z-index: 2; }
-        .btn-glass-cta:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 oklch(100% 0 0 / 25%), 0 16px 48px oklch(5% 0 0 / 80%); }
-        .btn-glass-cta:hover::after { opacity: 1; --btn-border-angle: -145deg; }
-
+        
         /* Premium Engineered Marquee System */
         .marquee-track { 
             display: flex; 
@@ -286,12 +280,58 @@
         .port-item.is-active .port-desc, .port-item.is-active .port-arrow, .port-item.is-active .port-meta { opacity: 1; transform: translateY(0); }
         .port-item:focus-visible .port-text-wrap { opacity: 1; }
 
-        .spotlight-card { position: relative; overflow: hidden; --mouse-x: 50%; --mouse-y: 50%; border: none; }
-        .spotlight-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), oklch(83.5% 0.17 84 / 8%), transparent 65%); opacity: 0; transition: opacity 0.4s ease; pointer-events: none; z-index: 0; border-radius: inherit; }
-        .spotlight-card:hover::before { opacity: 1; }
+        /* --- AWWWARDS OPTIMIZATION: HARDWARE ACCELERATION & PAINT BOTTLENECKS --- */
+        .reveal-up { 
+            opacity: 0; 
+            transform: translateY(40px) translateZ(0); 
+            will-change: transform, opacity; 
+            backface-visibility: hidden;
+        }
 
-        .reveal-up { opacity: 0; transform: translateY(40px); will-change: transform, opacity; }
-        .reveal-up.in-view { opacity: 1; transform: translateY(0); transition: opacity 1.15s cubic-bezier(0.16, 1, 0.3, 1), transform 1.15s cubic-bezier(0.16, 1, 0.3, 1); will-change: auto; }
+        .reveal-up.in-view { 
+            opacity: 1; 
+            transform: translateY(0) translateZ(0); 
+            transition: opacity 1.15s cubic-bezier(0.16, 1, 0.3, 1), transform 1.15s cubic-bezier(0.16, 1, 0.3, 1); 
+            will-change: auto; 
+        }
+
+        .spotlight-card, .btn-glass-cta, #quickForm {
+            transform: translateZ(0);
+            will-change: transform;
+            position: relative; 
+            overflow: hidden; 
+            --mouse-x: 50%; 
+            --mouse-y: 50%; 
+            border: none;
+        }
+        
+        .spotlight-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), oklch(83.5% 0.17 84 / 8%), transparent 65%); opacity: 0; transition: opacity 0.4s ease; pointer-events: none; z-index: 0; border-radius: inherit; }
+        
+        @media (max-width: 768px) {
+            .backdrop-blur-3xl {
+                backdrop-filter: blur(12px) !important;
+                -webkit-backdrop-filter: blur(12px) !important;
+            }
+        }
+
+        /* --- AWWWARDS OPTIMIZATION: STRICT HOVER LOGIC --- */
+        @media (hover: hover) and (pointer: fine) {
+            .spotlight-card:hover {
+                transform: translateY(-8px) translateZ(0) !important;
+                background-color: oklch(100% 0 0 / 5%) !important;
+            }
+            .spotlight-card:hover::before { opacity: 1; }
+            
+            .btn-glass-cta:hover { 
+                transform: translateY(-1px) translateZ(0) !important; 
+                box-shadow: inset 0 1px 0 oklch(100% 0 0 / 25%), 0 16px 48px oklch(5% 0 0 / 80%);
+            }
+            .btn-glass-cta:hover::after { opacity: 1; --btn-border-angle: -145deg; }
+            
+            .port-bg img {
+                will-change: filter;
+            }
+        }
 
         .hover-trigger * { pointer-events: none; }
     </style>
@@ -320,15 +360,17 @@
 <div id="cur-dot" aria-hidden="true"></div>
 <div id="cur-ring" aria-hidden="true"><span id="cur-label"></span></div>
 
-<div id="ga-loader" aria-hidden="true">
-    <div class="flex flex-col items-center gap-8">
-        <div class="animate-[pulse_1.8s_ease-in-out_infinite]">
-            <img src="logo.svg" alt="" class="w-[clamp(120px,20vw,180px)] h-auto filter brightness-100">
+<div id="ga-loader" aria-hidden="true" class="fixed inset-0 z-[9999] bg-obsidian flex items-center justify-center will-change-transform">
+    <div class="flex flex-col items-center gap-[clamp(2rem,4vw,3rem)] w-full px-8">
+        <div class="overflow-hidden pb-2">
+            <img src="logo.svg" alt="" id="loaderLogo" class="w-[clamp(80px,12vw,120px)] h-auto translate-y-[101%] opacity-0 filter brightness-100">
         </div>
-        <div class="w-[clamp(120px,20vw,200px)] h-8 relative overflow-hidden flex items-center justify-center">
-            <div id="gaLoaderBar" class="ga-loader-bar !h-[2px]"></div>
+        <div class="w-[clamp(200px,30vw,320px)] h-[2px] bg-white/5 relative overflow-hidden rounded-full">
+            <div id="loaderBar" class="absolute inset-0 bg-gradient-to-r from-accent to-accent2 origin-left scale-x-0 shadow-[0_0_12px_oklch(83.5%_0.17_84/60%)] rounded-full"></div>
         </div>
-        <span class="font-bold text-[0.52rem] tracking-[0.2em] uppercase text-white/40 animate-[pulse_1.2s_ease-in-out_infinite_alternate]">Loading</span>
+        <div class="overflow-hidden pt-1 h-[20px] flex items-center justify-center">
+            <span id="loaderText" class="block font-bold text-[0.55rem] tracking-[0.25em] text-white/60 uppercase font-mono translate-y-[101%] opacity-0 will-change-transform">INITIALIZING STRATEGY</span>
+        </div>
     </div>
 </div>
 
@@ -520,7 +562,7 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <article class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+            <article class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                 <span class="text-accent font-bold text-[0.58rem] tracking-[0.18em] uppercase mb-6 opacity-80">01</span>
                 <p class="text-[clamp(0.88rem,1.1vw,1rem)] text-white/90 leading-[1.82] mb-8 flex-1">"What sets Ghaidak apart is that he connects design decisions to business outcomes. Most designers can't do that. He can."</p>
                 <div class="pt-2 mt-4 w-full">
@@ -531,7 +573,7 @@
             </article>
 
             <!-- Broken Grid Layout for Tension & Emphasis -->
-            <article class="spotlight-card lg:col-span-2 bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+            <article class="spotlight-card lg:col-span-2 bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                 <span class="text-accent font-bold text-[0.58rem] tracking-[0.18em] uppercase mb-6 opacity-80">02</span>
                 <p class="text-[clamp(1.2rem,2vw,1.5rem)] text-white/95 leading-[1.6] mb-8 flex-1 font-bold">"His branding work for our California client drove a 25% sales increase and a 50% surge in social media visibility within a single month."</p>
                 <div class="pt-2 mt-4 w-full">
@@ -541,7 +583,7 @@
                 </div>
             </article>
 
-            <article class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+            <article class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                 <span class="text-accent font-bold text-[0.58rem] tracking-[0.18em] uppercase mb-6 opacity-80">03</span>
                 <p class="text-[clamp(0.88rem,1.1vw,1rem)] text-white/90 leading-[1.82] mb-8 flex-1">"Flexible, quality-driven, and genuinely invested in getting it right. He was really listening, intuitive, and focused on delivering the best result."</p>
                 <div class="pt-2 mt-4 w-full">
@@ -551,7 +593,7 @@
                 </div>
             </article>
 
-            <article class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+            <article class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                 <span class="text-accent font-bold text-[0.58rem] tracking-[0.18em] uppercase mb-6 opacity-80">04</span>
                 <p class="text-[clamp(0.88rem,1.1vw,1rem)] text-white/90 leading-[1.82] mb-8 flex-1">"One of the most committed people I've worked with - respects deadlines, deeply creative, and his work is truly unique."</p>
                 <div class="pt-2 mt-4 w-full">
@@ -561,7 +603,7 @@
                 </div>
             </article>
 
-            <article class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+            <article class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl flex flex-col transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                 <span class="text-accent font-bold text-[0.58rem] tracking-[0.18em] uppercase mb-6 opacity-80">05</span>
                 <p class="text-[clamp(0.88rem,1.1vw,1rem)] text-white/90 leading-[1.82] mb-8 flex-1">"Delivery is production-ready, deadlines are respected, and the quality is premium. A vital asset to our scaling process - rare to find."</p>
                 <div class="pt-2 mt-4 w-full">
@@ -581,28 +623,28 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                <div class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] flex flex-col rounded-3xl transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+                <div class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] flex flex-col rounded-3xl transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                     <span class="flex items-center gap-3 text-accent font-bold text-[0.56rem] tracking-[0.22em] uppercase mb-6 opacity-80">01</span>
                     <h3 class="font-extrabold text-[clamp(1rem,1.4vw,1.15rem)] uppercase tracking-[-0.01em] mb-4">Brand Identity</h3>
                     <p class="text-[clamp(0.86rem,1.1vw,0.95rem)] text-white/70 leading-[1.8] flex-1">The reason the right client chooses you before the call. Strategy-first - the mark is built after the positioning is locked.</p>
                     <div class="mt-8 font-bold text-[0.56rem] text-white/60 uppercase tracking-[0.08em] leading-[1.65]">Delivered: Logo suite · Color & type</div>
                 </div>
                 
-                <div class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] flex flex-col rounded-3xl transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up delay-[120ms] hover-trigger" data-cursor="READ">
+                <div class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] flex flex-col rounded-3xl transition-transform duration-[400ms] reveal-up delay-[120ms] hover-trigger" data-cursor="READ">
                     <span class="flex items-center gap-3 text-accent font-bold text-[0.56rem] tracking-[0.22em] uppercase mb-6 opacity-80">02</span>
                     <h3 class="font-extrabold text-[clamp(1rem,1.4vw,1.15rem)] uppercase tracking-[-0.01em] mb-4">Pitch Decks</h3>
                     <p class="text-[clamp(0.86rem,1.1vw,0.95rem)] text-white/70 leading-[1.8] flex-1">Founders use these to raise capital and close enterprise deals. Built for the room where the decision is made.</p>
                     <div class="mt-8 font-bold text-[0.56rem] text-white/60 uppercase tracking-[0.08em] leading-[1.65]">Delivered: Pitch deck · One-pager</div>
                 </div>
 
-                <div class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] flex flex-col rounded-3xl transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up delay-[240ms] hover-trigger" data-cursor="READ">
+                <div class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] flex flex-col rounded-3xl transition-transform duration-[400ms] reveal-up delay-[240ms] hover-trigger" data-cursor="READ">
                     <span class="flex items-center gap-3 text-accent font-bold text-[0.56rem] tracking-[0.22em] uppercase mb-6 opacity-80">03</span>
                     <h3 class="font-extrabold text-[clamp(1rem,1.4vw,1.15rem)] uppercase tracking-[-0.01em] mb-4">Marketing Visuals</h3>
                     <p class="text-[clamp(0.86rem,1.1vw,0.95rem)] text-white/70 leading-[1.8] flex-1">Ads and social visuals measured in clicks and conversions. The right people stop. The right people buy.</p>
                     <div class="mt-8 font-bold text-[0.56rem] text-white/60 uppercase tracking-[0.08em] leading-[1.65]">Delivered: Ad creatives · Social templates</div>
                 </div>
 
-                <div class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] flex flex-col rounded-3xl transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up delay-[360ms] hover-trigger" data-cursor="READ">
+                <div class="spotlight-card bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] p-[clamp(1.5rem,5vw,2.5rem)] flex flex-col rounded-3xl transition-transform duration-[400ms] reveal-up delay-[360ms] hover-trigger" data-cursor="READ">
                     <span class="flex items-center gap-3 text-accent font-bold text-[0.56rem] tracking-[0.22em] uppercase mb-6 opacity-80">04</span>
                     <h3 class="font-extrabold text-[clamp(1rem,1.4vw,1.15rem)] uppercase tracking-[-0.01em] mb-4">Web Design</h3>
                     <p class="text-[clamp(0.86rem,1.1vw,0.95rem)] text-white/70 leading-[1.8] flex-1">Converts visitors into clients before you pick up the phone. Handed off ready to develop.</p>
@@ -671,7 +713,7 @@
             </div>
             
             <div class="flex flex-col gap-6 md:gap-8 mb-16">
-                <div class="spotlight-card grid grid-cols-[96px_1fr] md:max-lg:grid-cols-[48px_1fr] max-md:grid-cols-[48px_1fr] gap-[clamp(1.5rem,3vw,3rem)] p-[clamp(2rem,3vw,3rem)] rounded-3xl items-start bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+                <div class="spotlight-card grid grid-cols-[96px_1fr] md:max-lg:grid-cols-[48px_1fr] max-md:grid-cols-[48px_1fr] gap-[clamp(1.5rem,3vw,3rem)] p-[clamp(2rem,3vw,3rem)] rounded-3xl items-start bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                     <span class="font-bold text-[0.72rem] text-accent tracking-[0.08em] pt-1">01</span>
                     <div>
                         <h3 class="font-extrabold text-[clamp(1.35rem,2.2vw,1.9rem)] uppercase tracking-[-0.02em] leading-[1.1] mb-4">Send a brief</h3>
@@ -679,7 +721,7 @@
                     </div>
                 </div>
                 
-                <div class="spotlight-card grid grid-cols-[96px_1fr] md:max-lg:grid-cols-[48px_1fr] max-md:grid-cols-[48px_1fr] gap-[clamp(1.5rem,3vw,3rem)] p-[clamp(2rem,3vw,3rem)] rounded-3xl items-start bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+                <div class="spotlight-card grid grid-cols-[96px_1fr] md:max-lg:grid-cols-[48px_1fr] max-md:grid-cols-[48px_1fr] gap-[clamp(1.5rem,3vw,3rem)] p-[clamp(2rem,3vw,3rem)] rounded-3xl items-start bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                     <span class="font-bold text-[0.72rem] text-accent tracking-[0.08em] pt-1">02</span>
                     <div>
                         <h3 class="font-extrabold text-[clamp(1.35rem,2.2vw,1.9rem)] uppercase tracking-[-0.02em] leading-[1.1] mb-4">I respond within 24 hours</h3>
@@ -687,7 +729,7 @@
                     </div>
                 </div>
 
-                <div class="spotlight-card grid grid-cols-[96px_1fr] md:max-lg:grid-cols-[48px_1fr] max-md:grid-cols-[48px_1fr] gap-[clamp(1.5rem,3vw,3rem)] p-[clamp(2rem,3vw,3rem)] rounded-3xl items-start bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+                <div class="spotlight-card grid grid-cols-[96px_1fr] md:max-lg:grid-cols-[48px_1fr] max-md:grid-cols-[48px_1fr] gap-[clamp(1.5rem,3vw,3rem)] p-[clamp(2rem,3vw,3rem)] rounded-3xl items-start bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                     <span class="font-bold text-[0.72rem] text-accent tracking-[0.08em] pt-1">03</span>
                     <div>
                         <h3 class="font-extrabold text-[clamp(1.35rem,2.2vw,1.9rem)] uppercase tracking-[-0.02em] leading-[1.1] mb-4">We align before committing</h3>
@@ -711,19 +753,19 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="spotlight-card p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+            <div class="spotlight-card p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                 <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-4">How long does a project take?</h3>
                 <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/60 leading-[1.65]">Brand identity: 2–3 weeks. Full brand system with guidelines: 4–6 weeks. Pitch deck: 5–7 days. Timeline is locked in the brief - I don't move goalposts.</p>
             </div>
-            <div class="spotlight-card p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger delay-[120ms]" data-cursor="READ">
+            <div class="spotlight-card p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] reveal-up hover-trigger delay-[120ms]" data-cursor="READ">
                 <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-4">Do you work with international clients remotely?</h3>
                 <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/60 leading-[1.65]">All of my clients are international. Every project runs fully remote - async-first, with structured check-ins. US, Europe, Middle East - no time zone has ever been a blocker.</p>
             </div>
-            <div class="spotlight-card p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger" data-cursor="READ">
+            <div class="spotlight-card p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] reveal-up hover-trigger" data-cursor="READ">
                 <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-4">What if I don't like the direction?</h3>
                 <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/60 leading-[1.65]">We align on strategy before a single pixel is placed. You approve the direction in writing before I build on it. Revisions are structured - not open-ended loops.</p>
             </div>
-            <div class="spotlight-card p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] hover:-translate-y-2 hover:bg-white/[0.05] reveal-up hover-trigger delay-[120ms]" data-cursor="READ">
+            <div class="spotlight-card p-[clamp(1.5rem,5vw,2.5rem)] rounded-3xl bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] transition-transform duration-[400ms] reveal-up hover-trigger delay-[120ms]" data-cursor="READ">
                 <h3 class="font-bold text-[clamp(0.82rem,1.2vw,0.95rem)] text-white tracking-[0.03em] mb-4">Do you sign NDAs?</h3>
                 <p class="text-[clamp(0.78rem,1.1vw,0.88rem)] text-white/60 leading-[1.65]">Yes, on request. Standard NDA or client-provided. Either way, your project information stays confidential.</p>
             </div>
@@ -744,7 +786,7 @@
                 <p class="font-normal text-[clamp(0.88rem,1.2vw,0.95rem)] text-white/70 leading-[1.75] max-w-[44ch] mt-4">I don't take on more than 3 projects at once. Most slots are running. If the timing is right - let's talk.</p>
                 
                 <div class="flex flex-col mt-8 md:mt-12 gap-6">
-                    <a href="https://wa.link/649ato" target="_blank" rel="noopener noreferrer" class="group relative flex justify-between items-center p-[clamp(1.5rem,2.5vw,2rem)] rounded-[24px] bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] hover:bg-white/[0.05] transition-transform duration-[400ms] hover:-translate-y-2 hover-trigger active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian" data-cursor="REACH">
+                    <a href="https://wa.link/649ato" target="_blank" rel="noopener noreferrer" class="group relative flex justify-between items-center p-[clamp(1.5rem,2.5vw,2rem)] rounded-[24px] bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-3xl shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)] hover:bg-white/[0.05] transition-transform duration-[400ms] hover-trigger active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian spotlight-card" data-cursor="REACH">
                         <div class="flex items-center gap-6 md:gap-8">
                             <div class="w-16 h-16 md:w-16 md:h-16 rounded-full bg-whatsapp/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-[400ms] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_0_20px_oklch(76%_0.17_151/20%)] shrink-0">
                                 <svg class="w-8 h-8 md:w-8 md:h-8 text-whatsapp" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -813,15 +855,15 @@
     </section>
 </main>
 
-<footer class="bg-obsidian py-16 px-[clamp(1.25rem,6vw,5rem)] relative z-20">
+<footer class="bg-obsidian pt-16 pb-[clamp(7rem,12vh,9rem)] px-[clamp(1.25rem,6vw,5rem)] relative z-20">
     <div class="max-w-[1400px] mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-8 pb-12 mb-12">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-8 pb-12 mb-8 border-b border-white/[0.04]">
             <a href="#hero" aria-label="Home" class="hover-trigger min-h-[48px] flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md px-2" data-cursor="CLICK"><img src="logo.svg" alt="GA" class="h-6 w-auto opacity-60 hover:opacity-100 transition-opacity"></a>
             <a href="mailto:studio@ghaidak.com" class="font-bold text-[0.52rem] text-white/60 uppercase tracking-[0.06em] hover:text-white transition-colors hover-trigger min-h-[48px] flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md px-2" data-cursor="CLICK">studio@ghaidak.com</a>
         </div>
-        <div class="flex flex-col md:flex-row justify-between items-center pt-8 font-bold text-[0.52rem] text-white/60 uppercase tracking-[0.1em] gap-8">
-            <span>© <span id="current-year">2026</span>. All rights reserved.</span>
-            <div class="flex flex-wrap justify-center gap-8">
+        <div class="flex flex-col lg:flex-row justify-between items-center lg:items-end pt-4 font-bold text-[0.52rem] text-white/60 uppercase tracking-[0.1em] gap-8">
+            <span class="shrink-0 whitespace-nowrap">© <span id="current-year">2026</span>. All rights reserved.</span>
+            <div class="flex flex-wrap justify-center lg:justify-end gap-x-4 md:gap-x-8 gap-y-2">
                 <a href="#portfolio" class="hover:text-white transition-colors hover-trigger min-h-[48px] flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md px-2 -mx-2" data-cursor="CLICK">Work</a>
                 <a href="#expertise" class="hover:text-white transition-colors hover-trigger min-h-[48px] flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md px-2 -mx-2" data-cursor="CLICK">Services</a>
                 <a href="#about" class="hover:text-white transition-colors hover-trigger min-h-[48px] flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md px-2 -mx-2" data-cursor="CLICK">About</a>
@@ -958,14 +1000,98 @@ function splitHeroWords() {
 }
 splitHeroWords();
 
-window.addEventListener('load', () => {
-    const loader = document.getElementById('ga-loader');
-    const bar = document.getElementById('gaLoaderBar');
-    if(bar) bar.style.width = '100%';
-    setTimeout(() => {
-        if(loader) loader.classList.add('ga-loader--out');
-        setTimeout(() => loader && loader.remove(), 700);
-    }, 400);
+document.addEventListener("DOMContentLoaded", () => {
+    const loaderBg = document.getElementById('ga-loader');
+    const loaderLogo = document.getElementById('loaderLogo');
+    const loaderBar = document.getElementById('loaderBar');
+    const loaderText = document.getElementById('loaderText');
+    
+    if(!loaderBg || !window.gsap) return;
+
+    const copyPhrases = [
+        "ALIGNING PERCEPTION", 
+        "BUILDING ARCHITECTURE", 
+        "RENDERING SYSTEM"
+    ];
+    let currentPhrase = 0;
+
+    // 1. Cinematic Intro Animation
+    gsap.to([loaderLogo, loaderText], {
+        y: '0%',
+        opacity: 1,
+        duration: 1.4,
+        ease: 'expo.out',
+        stagger: 0.15,
+        delay: 0.2
+    });
+
+    // 2. High-Density Typographic Sequence
+    let textInterval = setInterval(() => {
+        gsap.to(loaderText, {
+            y: -15, opacity: 0, duration: 0.3, ease: 'power2.in',
+            onComplete: () => {
+                loaderText.textContent = copyPhrases[currentPhrase];
+                currentPhrase = (currentPhrase + 1) % copyPhrases.length;
+                gsap.fromTo(loaderText, 
+                    { y: 15, opacity: 0 }, 
+                    { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }
+                );
+            }
+        });
+    }, 1400);
+
+    // 3. Simulated Hardware Load
+    let progress = { val: 0 };
+    let loadTween = gsap.to(progress, {
+        val: 85,
+        duration: 2.8,
+        ease: 'power3.inOut',
+        onUpdate: () => gsap.set(loaderBar, { scaleX: progress.val / 100 })
+    });
+
+    // 4. True Document Load Resolution
+    window.addEventListener('load', () => {
+        loadTween.kill();
+        
+        gsap.to(progress, {
+            val: 100,
+            duration: 0.6,
+            ease: 'power4.out',
+            onUpdate: () => gsap.set(loaderBar, { scaleX: progress.val / 100 }),
+            onComplete: () => {
+                clearInterval(textInterval);
+                
+                // Final System Lock
+                gsap.to(loaderText, {
+                    y: -15, opacity: 0, duration: 0.25, ease: 'power2.in',
+                    onComplete: () => {
+                        loaderText.style.color = "var(--accent)";
+                        loaderText.textContent = "VISION LOCKED";
+                        gsap.fromTo(loaderText, 
+                            { y: 15, opacity: 0 }, 
+                            { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out' }
+                        );
+                    }
+                });
+
+                // The Elite Awwwards Exit Sequence
+                const exitTl = gsap.timeline({
+                    delay: 0.7, // Hold to register "VISION LOCKED"
+                    onComplete: () => loaderBg.remove()
+                });
+                
+                exitTl.to([loaderBar, loaderText], {
+                    opacity: 0, y: -20, duration: 0.5, stagger: 0.1, ease: 'power3.in'
+                })
+                .to(loaderLogo, {
+                    y: -30, opacity: 0, duration: 0.6, ease: 'power3.in'
+                }, "-=0.3")
+                .to(loaderBg, {
+                    yPercent: -100, duration: 1.2, ease: 'expo.inOut'
+                }, "-=0.2");
+            }
+        });
+    });
 });
 
 const progressBar = document.getElementById('scrollProgress');
@@ -1251,9 +1377,11 @@ function initDarkVeil() {
     const stop = () => { running = false; cancelAnimationFrame(rafId); };
     
     document.addEventListener('visibilitychange', () => document.hidden ? stop() : (heroVisible && start()));
+    
+    // --- AWWWARDS OPTIMIZATION: PROTECT MAIN THREAD ON SCROLL ---
     new IntersectionObserver((entries) => {
         entries.forEach(e => { heroVisible = e.isIntersecting; heroVisible ? start() : stop(); });
-    }, { threshold: 0.01 }).observe(heroEl);
+    }, { threshold: 0.15 }).observe(heroEl);
     
     start();
     requestAnimationFrame(() => requestAnimationFrame(() => canvas.classList.add('veil-ready')));

@@ -273,24 +273,25 @@
         }
     </style>
 </head>
-<body class="antialiased selection:bg-accent/30 selection:text-white">
+<body class="antialiased selection:bg-accent/30 selection:text-white" style="overflow: hidden;">
+
+<!-- FOUC-Proof Loader -->
+<div id="ga-loader" aria-hidden="true" style="position: fixed; inset: 0; z-index: 9999; background-color: var(--obsidian); display: flex; align-items: center; justify-content: center;" class="will-change-transform">
+    <div style="display: flex; flex-direction: column; align-items: center; width: 100%; padding: 0 2rem; gap: clamp(2rem,4vw,3rem);">
+        <div style="width: clamp(200px,30vw,320px); height: 2px; background-color: rgba(255,255,255,0.05); position: relative; overflow: hidden; border-radius: 9999px; margin-top: 2.5rem;">
+            <div id="loaderBar" style="position: absolute; inset: 0; background-image: linear-gradient(to right, var(--accent), oklch(88% 0.134 86)); transform-origin: left; transform: scaleX(0); border-radius: 9999px; box-shadow: 0 0 12px oklch(83.5% 0.17 84 / 60%);"></div>
+        </div>
+        <div style="overflow: hidden; padding-top: 0.25rem; height: 20px; display: flex; align-items: center; justify-content: center;">
+            <span id="loaderText" style="display: block; font-family: 'DM Mono', monospace; font-weight: 700; font-size: 0.55rem; letter-spacing: 0.25em; color: rgba(255,255,255,0.6); text-transform: uppercase; transform: translateY(101%); opacity: 0; will-change: transform, opacity;">RENDERING SYSTEM</span>
+        </div>
+    </div>
+</div>
 
 <div class="noise-overlay" aria-hidden="true"></div>
 <div id="scrollProgress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-accent to-accent2 z-[9999] w-0 pointer-events-none shadow-[0_0_8px_oklch(83.5%_0.17_84/50%)]"></div>
 
 <div id="cur-dot" aria-hidden="true"></div>
 <div id="cur-ring" aria-hidden="true"><span id="cur-label"></span></div>
-
-<div id="ga-loader" aria-hidden="true" class="fixed inset-0 z-[9999] bg-obsidian flex items-center justify-center will-change-transform">
-    <div class="flex flex-col items-center gap-[clamp(2rem,4vw,3rem)] w-full px-8">
-        <div class="w-[clamp(200px,30vw,320px)] h-[2px] bg-white/5 relative overflow-hidden rounded-full mt-10">
-            <div id="loaderBar" class="absolute inset-0 bg-gradient-to-r from-accent to-accent2 origin-left scale-x-0 shadow-[0_0_12px_oklch(83.5%_0.17_84/60%)] rounded-full"></div>
-        </div>
-        <div class="overflow-hidden pt-1 h-[20px] flex items-center justify-center">
-            <span id="loaderText" class="block font-bold text-[0.55rem] tracking-[0.25em] text-white/60 uppercase font-mono translate-y-[101%] opacity-0 will-change-transform">RENDERING SYSTEM</span>
-        </div>
-    </div>
-</div>
 
 <nav id="navbar" class="hud-nav fixed top-5 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] md:w-[calc(100%-clamp(3rem,8vw,10rem))] max-w-[1200px] h-16 px-5 lg:px-8 flex justify-between items-center z-[9600] rounded-full bg-white/[0.02] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-[32px] shadow-[0_8px_32px_oklch(5%_0_0/60%),_inset_0_1px_0_rgba(255,255,255,0.03)]" aria-label="Primary navigation">
     <a href="/" aria-label="Home" class="z-10 flex items-center h-full min-w-[48px] hover:opacity-80 transition-opacity active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-full px-2" data-cursor="CLICK">
@@ -441,10 +442,14 @@
         </div>
         <div id="horiz-wrapper" class="horiz-wrapper" data-cursor="DRAG">
             
-            <div class="horiz-intro w-[85vw] md:w-[65vw] lg:w-[60vw] xl:w-[55vw] flex-shrink-0 flex flex-col justify-center pr-8 md:pr-12 lg:pr-[8vw] xl:pr-[10vw]">
-                <span class="block font-bold text-[0.58rem] tracking-[0.18em] uppercase text-accent mb-4">Visual Execution</span>
-                <h2 class="text-[clamp(3.5rem,8vw,7rem)] font-extrabold uppercase tracking-tight leading-[0.9] text-white">THE GALLERY.</h2>
-                <p class="text-[clamp(0.95rem,1.2vw,1.1rem)] text-white/60 max-w-[40ch] mx-auto lg:mx-0 leading-[1.75] mt-6">A complete breakdown of the design architecture, moving directly from foundational brand logic into production-ready physical and digital touchpoints.</p>
+            <div class="horiz-intro w-[85vw] md:w-[40vw] lg:w-[35vw] xl:w-[30vw] flex-shrink-0 flex flex-col justify-center pr-8 md:pr-16 lg:pr-[6vw] xl:pr-[8vw]">
+                <span class="block font-bold text-[0.58rem] tracking-[0.18em] uppercase text-accent mb-6">Visual Execution</span>
+                <h2 class="text-[clamp(3.5rem,8vw,7rem)] font-extrabold uppercase tracking-tight leading-[0.85] text-white mb-6">
+                    THE<br>
+                    GAL<br>
+                    LERY.
+                </h2>
+                <p class="text-[clamp(0.95rem,1.2vw,1.1rem)] text-white/60 max-w-[40ch] mx-auto lg:mx-0 leading-[1.75]">A complete breakdown of the design architecture, moving directly from foundational brand logic into production-ready physical and digital touchpoints.</p>
             </div>
 
             <div class="horiz-slide group"><img src="nargis/3.avif" alt="Nargis Application 3" loading="lazy"></div>
@@ -623,7 +628,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         gsap.fromTo(loaderText, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'expo.out' });
                     }
                 });
-                const exitTl = gsap.timeline({ delay: 0.5, onComplete: () => loaderBg.remove() });
+                const exitTl = gsap.timeline({ 
+                    delay: 0.5, 
+                    onComplete: () => { 
+                        loaderBg.remove();
+                        document.body.style.overflow = ''; // Unlock scrolling seamlessly
+                    } 
+                });
                 exitTl.to([loaderBar, loaderText], { opacity: 0, y: -20, duration: 0.4, stagger: 0.1, ease: 'power3.in' })
                       .to(loaderBg, { yPercent: -100, duration: 0.8, ease: 'expo.inOut' });
             }
